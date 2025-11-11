@@ -2,10 +2,10 @@ services:
   human-capital:
     image: human-capital
     ports:
-      - "3900:3900"
+      - "3100:3100"
     volumes:
       - ./:/app
     environment:
       - NODE_ENV=development
-      - PORT=3900
+      - PORT=3100
 

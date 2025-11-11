@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import ThemeProviderWrapper from "../components/providers/ThemeProviderWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,12 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Human Capital | SAR Tax & Management Consultant",
-  description: "Human Capital Management System - SAR Tax & Management Consultant",
+  title: "IT Operations | SAR Tax & Management Consultant",
+  description: "IT Infrastructure and Service Management Platform - SAR Tax & Management Consultant",
 };
 
 /**
- * Root Layout for Human Capital App
+ * Root Layout for IT Operations App
  *
  * Authentication is handled by:
  * - middleware.ts: Route protection and auth checks
@@ -34,7 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <ThemeProviderWrapper>
+          {children}
+        </ThemeProviderWrapper>
       </body>
     </html>
   );

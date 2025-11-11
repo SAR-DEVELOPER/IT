@@ -4,29 +4,27 @@ import {
   Box,
   Typography,
   Paper,
-  useTheme,
   Grid2,
-  Container,
-  Alert,
-  AlertTitle,
+  Chip,
 } from "@mui/material";
 import {
-  People as PeopleIcon,
-  PersonAdd as RecruitmentIcon,
-  Assessment as PerformanceIcon,
-  School as TrainingIcon,
-  Payment as PayrollIcon,
-  Event as AttendanceIcon,
-  TrendingUp as AnalyticsIcon,
-  Group as TeamIcon,
-  Settings as SettingsIcon,
-  WorkHistory as CareerIcon,
-  LocalHospital as BenefitsIcon,
-  Badge as BadgeIcon,
-  RocketLaunch as RocketIcon,
+  ConfirmationNumber as TicketIcon,
+  MenuBook as KnowledgeIcon,
+  Monitor as MonitorIcon,
+  Inventory as AssetIcon,
+  Key as LicenseIcon,
+  Security as SecurityIcon,
+  Cable as NetworkIcon,
+  Storage as ServerIcon,
+  Backup as BackupIcon,
+  AdminPanelSettings as AccessIcon,
+  Insights as AnalyticsIcon,
+  Computer as ITIcon,
+  Speed as PerformanceIcon,
+  Cloud as CloudIcon,
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import UserInfoSidebar from "../components/ui/UserInfoSidebar";
+import ITSidebar from "../components/ui/ITSidebar";
 
 // Module Card Component
 interface ModuleItemProps {
@@ -123,9 +121,8 @@ const ModuleCard: React.FC<ModuleItemProps> = ({
   );
 };
 
-// Main Template Dashboard Page
-export default function TemplateDashboard() {
-  const theme = useTheme();
+// Main IT Dashboard Page
+export default function ITDashboard() {
   const router = useRouter();
 
   // Handle module card clicks
@@ -133,123 +130,123 @@ export default function TemplateDashboard() {
     router.push(urlTarget);
   };
 
-  // Example business modules (all disabled in template)
-  const businessModules = [
+  // IT modules
+  const itModules = [
     {
-      title: "Employee Management",
-      description: "Manage employee profiles, data, and records",
-      urlTarget: "/employees",
-      icon: <PeopleIcon />,
+      title: "IT Help Desk",
+      description: "Submit and track IT support tickets and requests",
+      urlTarget: "/helpdesk",
+      icon: <TicketIcon />,
       color: "#1976d2",
-      badge: "Core",
+      badge: "Support",
       available: false,
     },
     {
-      title: "Recruitment",
-      description: "Manage job postings, candidates, and hiring process",
-      urlTarget: "/recruitment",
-      icon: <RecruitmentIcon />,
-      color: "#388e3c",
-      badge: "Hiring",
-      available: false,
-    },
-    {
-      title: "Performance Management",
-      description: "Track and evaluate employee performance",
-      urlTarget: "/performance",
-      icon: <PerformanceIcon />,
+      title: "Knowledge Base",
+      description: "Access IT documentation, guides, and solutions",
+      urlTarget: "/knowledge",
+      icon: <KnowledgeIcon />,
       color: "#7b1fa2",
-      badge: "Review",
+      badge: "KMS",
       available: false,
     },
     {
-      title: "Training & Development",
-      description: "Manage training programs and employee development",
-      urlTarget: "/training",
-      icon: <TrainingIcon />,
-      color: "#f57c00",
-      badge: "Learning",
-      available: false,
-    },
-    {
-      title: "Payroll Management",
-      description: "Process payroll, benefits, and compensation",
-      urlTarget: "/payroll",
-      icon: <PayrollIcon />,
+      title: "Infrastructure Status",
+      description: "Monitor system health, uptime, and performance",
+      urlTarget: "/infrastructure",
+      icon: <MonitorIcon />,
       color: "#2e7d32",
-      badge: "Finance",
+      badge: "Live",
       available: false,
     },
     {
-      title: "Attendance & Leave",
-      description: "Track attendance, leave requests, and schedules",
-      urlTarget: "/attendance",
-      icon: <AttendanceIcon />,
-      color: "#0288d1",
-      badge: "Time",
+      title: "Asset Management",
+      description: "Track hardware, devices, and IT equipment",
+      urlTarget: "/assets",
+      icon: <AssetIcon />,
+      color: "#f57c00",
+      badge: "Inventory",
       available: false,
     },
     {
-      title: "Employee Self-Service",
-      description: "Employee portal for personal information and requests",
-      urlTarget: "/self-service",
-      icon: <BadgeIcon />,
+      title: "Software Licenses",
+      description: "Manage software licenses, renewals, and compliance",
+      urlTarget: "/licenses",
+      icon: <LicenseIcon />,
+      color: "#d32f2f",
+      badge: "Licenses",
+      available: false,
+    },
+    {
+      title: "Security Center",
+      description: "Security alerts, compliance, and audit logs",
+      urlTarget: "/security",
+      icon: <SecurityIcon />,
+      color: "#c62828",
+      badge: "Security",
+      available: false,
+    },
+    {
+      title: "Network Management",
+      description: "Monitor network topology, bandwidth, and connectivity",
+      urlTarget: "/network",
+      icon: <NetworkIcon />,
+      color: "#00838f",
+      badge: "Network",
+      available: false,
+    },
+    {
+      title: "Server Management",
+      description: "Manage servers, containers, and virtual machines",
+      urlTarget: "/servers",
+      icon: <ServerIcon />,
       color: "#5c6bc0",
-      badge: "Portal",
+      badge: "Servers",
       available: false,
     },
     {
-      title: "Analytics & Reports",
-      description: "View business metrics, reports, and insights",
+      title: "Backup & Recovery",
+      description: "Configure backups, disaster recovery, and restores",
+      urlTarget: "/backup",
+      icon: <BackupIcon />,
+      color: "#388e3c",
+      badge: "Backup",
+      available: false,
+    },
+    {
+      title: "Access Management",
+      description: "Manage user permissions, roles, and access control",
+      urlTarget: "/access",
+      icon: <AccessIcon />,
+      color: "#e64a19",
+      badge: "IAM",
+      available: false,
+    },
+    {
+      title: "Cloud Services",
+      description: "Monitor cloud resources, costs, and deployments",
+      urlTarget: "/cloud",
+      icon: <CloudIcon />,
+      color: "#0288d1",
+      badge: "Cloud",
+      available: false,
+    },
+    {
+      title: "IT Analytics",
+      description: "Reports, metrics, and insights on IT operations",
       urlTarget: "/analytics",
       icon: <AnalyticsIcon />,
-      color: "#d32f2f",
+      color: "#6a1b9a",
       badge: "Insights",
-      available: false,
-    },
-    {
-      title: "Career Development",
-      description: "Manage career paths and succession planning",
-      urlTarget: "/career",
-      icon: <CareerIcon />,
-      color: "#e64a19",
-      badge: "Growth",
-      available: false,
-    },
-    {
-      title: "Benefits Administration",
-      description: "Manage employee benefits and wellness programs",
-      urlTarget: "/benefits",
-      icon: <BenefitsIcon />,
-      color: "#00838f",
-      badge: "Wellness",
-      available: false,
-    },
-    {
-      title: "Team Management",
-      description: "Organize teams, departments, and reporting structures",
-      urlTarget: "/teams",
-      icon: <TeamIcon />,
-      color: "#3c5a96",
-      badge: "Structure",
-      available: false,
-    },
-    {
-      title: "Settings",
-      description: "Configure policies, workflows, and preferences",
-      urlTarget: "/settings",
-      icon: <SettingsIcon />,
-      color: "#607d8b",
-      badge: "Config",
       available: false,
     },
   ];
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Box sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8 }, py: 4 }}>
       <Grid2 container spacing={3}>
         {/* Main Content - Left Side */}
-        <Grid2 size={{ xs: 12, md: 9 }}>
+        <Grid2 size={{ xs: 12, lg: 9 }}>
           {/* Welcome Section */}
           <Box sx={{ mb: 4 }}>
             <motion.div
@@ -258,57 +255,102 @@ export default function TemplateDashboard() {
               transition={{ duration: 0.5 }}
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-                <RocketIcon sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                <ITIcon sx={{ fontSize: 48, color: "#1976d2" }} />
                 <Box>
-                  <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                    SAR Module Template
+                  <Typography variant="h4" sx={{ fontWeight: "bold", color: "#1e3a8a" }}>
+                    IT Services Portal
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    A production-ready Next.js template for business applications
+                    Access IT support, resources, and tools all in one place
                   </Typography>
                 </Box>
               </Box>
             </motion.div>
           </Box>
 
-          {/* Getting Started Alert */}
+          {/* Service Status Banner */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Alert severity="info" sx={{ mb: 4, borderRadius: 2 }}>
-              <AlertTitle sx={{ fontWeight: "bold" }}>Welcome to SAR Module Template!</AlertTitle>
-              This is a clean, production-ready template with:
-              <Box component="ul" sx={{ mt: 1, mb: 0, pl: 2 }}>
-                <li><strong>Authentication:</strong> Cookie-based SSO with Keycloak</li>
-                <li><strong>Configuration:</strong> Centralized, type-safe environment management</li>
-                <li><strong>API Layer:</strong> Proxy pattern with automatic cookie forwarding</li>
-                <li><strong>UI Components:</strong> Material-UI with custom theme</li>
-                <li><strong>Examples:</strong> Client & Identity management features included</li>
+            <Paper
+              elevation={0}
+              sx={{
+                mb: 4,
+                p: 3,
+                borderRadius: 3,
+                background: "linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)",
+                color: "white",
+                position: "relative",
+                overflow: "hidden",
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
+              <Box sx={{ position: "relative", zIndex: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2.5 }}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1 }}>
+                    <PerformanceIcon />
+                    IT Services Status
+                  </Typography>
+                  <Chip
+                    label="All Services Available"
+                    sx={{
+                      bgcolor: "#10b981",
+                      color: "white",
+                      fontWeight: "bold",
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    }}
+                  />
+                </Box>
+                <Grid2 container spacing={2}>
+                  <Grid2 size={{ xs: 6, sm: 3 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.5 }}>Avg Response Time</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>2.5 hrs</Typography>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6, sm: 3 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.5 }}>My Open Tickets</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>3</Typography>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6, sm: 3 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.5 }}>Knowledge Articles</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>248</Typography>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6, sm: 3 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.5 }}>System Health</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>99.8%</Typography>
+                  </Grid2>
+                </Grid2>
               </Box>
-              <Typography variant="body2" sx={{ mt: 2 }}>
-                📚 See <strong>TEMPLATE_USAGE.md</strong> for setup instructions and <strong>CLAUDE.md</strong> for development guidelines.
-              </Typography>
-            </Alert>
+              <Box
+                sx={{
+                  position: "absolute",
+                  right: -30,
+                  bottom: -30,
+                  opacity: 0.08,
+                }}
+              >
+                <ITIcon sx={{ fontSize: 200 }} />
+              </Box>
+            </Paper>
           </motion.div>
 
-          {/* Business Modules Grid */}
+          {/* IT Services Grid */}
           <Box>
-            <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
-              Example Business Modules
+            <Typography variant="h5" sx={{ mb: 1, fontWeight: "bold", color: "#1e3a8a" }}>
+              Available Services
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Below are example module cards. Customize these for your business needs. Currently all modules are disabled as examples.
+              Access IT support, resources, and tools. Need help? Start by submitting a ticket or browsing our knowledge base.
             </Typography>
 
             <Grid2 container spacing={3}>
-              {businessModules.map((module, index) => (
+              {itModules.map((module, index) => (
                 <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={index}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 * index }}
+                    transition={{ duration: 0.5, delay: 0.05 * index }}
                   >
                     <ModuleCard {...module} onClick={handleModuleClick} />
                   </motion.div>
@@ -319,16 +361,16 @@ export default function TemplateDashboard() {
         </Grid2>
 
         {/* Sidebar - Right Side */}
-        <Grid2 size={{ xs: 12, md: 3 }}>
+        <Grid2 size={{ xs: 12, lg: 3 }}>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <UserInfoSidebar />
+            <ITSidebar />
           </motion.div>
         </Grid2>
       </Grid2>
-    </Container>
+    </Box>
   );
 }

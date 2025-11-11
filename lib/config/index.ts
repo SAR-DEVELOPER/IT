@@ -84,7 +84,7 @@ export const config: ModuleConfig = {
   name: env.NEXT_PUBLIC_MODULE_NAME,
   displayName: env.NEXT_PUBLIC_MODULE_DISPLAY_NAME,
   version: env.NEXT_PUBLIC_MODULE_VERSION,
-  port: 3900, // Default port for SAR modules
+  port: 3100, // Default port for IT modules
 
   api: {
     baseUrl: env.NEXT_PUBLIC_API_URL,
