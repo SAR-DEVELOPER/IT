@@ -11,6 +11,8 @@ export const TOKEN_EXPIRY = {
 
 export const PROTECTED_PATHS = [
   "/", // Root path (home/dashboard)
+  "/meeting",
+  "/meeting/zoom",
   // Add your module-specific protected paths here
   // Example: "/employees", "/payroll", etc.
 ];

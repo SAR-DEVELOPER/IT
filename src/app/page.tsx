@@ -22,6 +22,7 @@ import {
   Computer as ITIcon,
   Speed as PerformanceIcon,
   Cloud as CloudIcon,
+  VideoCall as VideoCallIcon,
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import ITSidebar from "../components/ui/ITSidebar";
@@ -132,6 +133,15 @@ export default function ITDashboard() {
 
   // IT modules
   const itModules = [
+    {
+      title: "Meetings",
+      description: "Schedule and join video meetings with Zoom and Teams",
+      urlTarget: "/meeting",
+      icon: <VideoCallIcon />,
+      color: "#2D8CFF",
+      badge: "Live",
+      available: true,
+    },
     {
       title: "IT Help Desk",
       description: "Submit and track IT support tickets and requests",

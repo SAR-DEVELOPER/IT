@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse} from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PROTECTED_PATHS, PUBLIC_PATHS } from "../lib/auth/constants";
 import { config as appConfig } from "../lib/config";
 
@@ -60,14 +60,23 @@ export function proxy(request: NextRequest) {
 /**
  * Configure paths that trigger middleware
  *
- * Add your module-specific routes here.
- * Example: "/employees/:path*", "/payroll/:path*"
+ * Matches all routes except:
+ * - API routes (/api/*)
+ * - Static files (_next/static, _next/image, favicon.ico, etc.)
+ * - Public files (robots.txt, sitemap.xml)
  */
 export const config = {
   matcher: [
-    "/", // Root/home page
-    // Add your protected routes here
-    // Example: "/employees/:path*"
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - robots.txt (robots file)
+     * - sitemap.xml (sitemap file)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
   ],
 };
 
