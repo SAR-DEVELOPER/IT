@@ -1,11 +1,26 @@
+version: '3'
+
 services:
-  human-capital:
-    image: human-capital
+  it:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: it-service
     ports:
       - "3100:3100"
     volumes:
+      # Mount the source code for hot reloading
       - ./:/app
+      # Prevent node_modules from being overwritten by the mount
+      - /app/node_modules
+    restart: always
     environment:
       - NODE_ENV=development
       - PORT=3100
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3100" ]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 

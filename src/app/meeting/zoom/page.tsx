@@ -584,15 +584,25 @@ export default function ZoomPage() {
 
     // Combine date and time into a single Date object (for display/comparison)
     const getCombinedDateTime = (): Date | null => {
-        if (!formData.startDate || !formData.startTime) return null;
+        if (!formData.startDate) return null;
 
         const date = new Date(formData.startDate);
-        const [hours, minutes] = formData.startTime.split(':').map(Number);
 
-        date.setHours(hours);
-        date.setMinutes(minutes);
-        date.setSeconds(0);
-        date.setMilliseconds(0);
+        // For all-day meetings, use 00:00:00
+        if (formData.duration === -1) {
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            date.setMilliseconds(0);
+        } else {
+            // For regular meetings, require time selection
+            if (!formData.startTime) return null;
+            const [hours, minutes] = formData.startTime.split(':').map(Number);
+            date.setHours(hours);
+            date.setMinutes(minutes);
+            date.setSeconds(0);
+            date.setMilliseconds(0);
+        }
 
         return date;
     };
@@ -600,12 +610,20 @@ export default function ZoomPage() {
     // Get UTC+7 ISO string for API submission
     // Returns ISO string with +07:00 timezone offset (Jakarta/Bangkok)
     const getUTC7ISOString = (): string | null => {
-        if (!formData.startDate || !formData.startTime) return null;
+        if (!formData.startDate) return null;
 
         // Format the date as YYYY-MM-DD
         const year = formData.startDate.getFullYear();
         const month = String(formData.startDate.getMonth() + 1).padStart(2, '0');
         const day = String(formData.startDate.getDate()).padStart(2, '0');
+
+        // For all-day meetings, start at 00:00:00
+        if (formData.duration === -1) {
+            return `${year}-${month}-${day}T00:00:00+07:00`;
+        }
+
+        // For regular meetings, require time selection
+        if (!formData.startTime) return null;
 
         // Create ISO string with UTC+7 timezone offset
         // Format: YYYY-MM-DDTHH:mm:ss+07:00
@@ -614,7 +632,18 @@ export default function ZoomPage() {
 
     // Get UTC+7 ISO string for end time
     const getUTC7EndISOString = (duration: number): string | null => {
-        if (!formData.startDate || !formData.startTime) return null;
+        if (!formData.startDate) return null;
+
+        // For all-day meetings, end at 23:59:59 of the selected date
+        if (duration === -1) {
+            const year = formData.startDate.getFullYear();
+            const month = String(formData.startDate.getMonth() + 1).padStart(2, '0');
+            const day = String(formData.startDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}T23:59:59+07:00`;
+        }
+
+        // For regular meetings, require time selection
+        if (!formData.startTime) return null;
 
         const startDate = getCombinedDateTime();
         if (!startDate) return null;
@@ -638,7 +667,10 @@ export default function ZoomPage() {
 
         // For "all day" meetings, check if account has any meetings that day
         if (duration === -1) {
-            const selectedDate = format(startTime, "yyyy-MM-dd");
+            // Use the date from formData if available, otherwise use startTime
+            const selectedDate = formData.startDate
+                ? format(formData.startDate, "yyyy-MM-dd")
+                : format(startTime, "yyyy-MM-dd");
             return !account.meetingsToday.some((meeting) => {
                 const meetingDate = format(parseISO(meeting.startTime), "yyyy-MM-dd");
                 return meetingDate === selectedDate;
@@ -665,6 +697,18 @@ export default function ZoomPage() {
 
     // Get available accounts for selected time
     const getAvailableAccounts = (): ZoomAccount[] => {
+        // For all-day meetings, only need the date
+        if (formData.duration === -1) {
+            if (!formData.startDate) return [];
+            // Create a date object at 00:00:00 for all-day meetings
+            const dateForCheck = new Date(formData.startDate);
+            dateForCheck.setHours(0, 0, 0, 0);
+            return accounts.filter((account) =>
+                isAccountAvailable(account, dateForCheck, formData.duration)
+            );
+        }
+
+        // For regular meetings, need both date and time
         const combinedDateTime = getCombinedDateTime();
         if (!combinedDateTime) return [];
         return accounts.filter((account) =>
@@ -674,9 +718,16 @@ export default function ZoomPage() {
 
     // Handle step navigation
     const handleNext = () => {
-        if (activeStep === 0 && (!formData.startDate || !formData.startTime.trim())) {
-            setError("Please select both date and time");
-            return;
+        if (activeStep === 0) {
+            if (!formData.startDate) {
+                setError("Please select a date");
+                return;
+            }
+            // For regular meetings (not all-day), require time selection
+            if (formData.duration !== -1 && !formData.startTime.trim()) {
+                setError("Please select a time");
+                return;
+            }
         }
         if (activeStep === 1 && !formData.accountId) {
             setError("Please select an account");
@@ -796,7 +847,11 @@ export default function ZoomPage() {
         const timeEndUTC7 = getUTC7EndISOString(formData.duration);
 
         if (!timeStartUTC7 || !timeEndUTC7) {
-            setError("Please select both date and time");
+            if (formData.duration === -1) {
+                setError("Please select a date");
+            } else {
+                setError("Please select both date and time");
+            }
             return;
         }
 
@@ -1515,7 +1570,7 @@ export default function ZoomPage() {
                                                 />
                                             </Grid2>
                                             <Grid2 size={{ xs: 12, sm: 6 }}>
-                                                <FormControl fullWidth required>
+                                                <FormControl fullWidth required={formData.duration !== -1}>
                                                     <InputLabel>Meeting Time</InputLabel>
                                                     <Select
                                                         value={formData.startTime}
@@ -1524,6 +1579,7 @@ export default function ZoomPage() {
                                                             setFormData({ ...formData, startTime: e.target.value });
                                                             setError(null);
                                                         }}
+                                                        disabled={formData.duration === -1}
                                                         MenuProps={{
                                                             PaperProps: {
                                                                 style: {
@@ -1538,6 +1594,11 @@ export default function ZoomPage() {
                                                             </MenuItem>
                                                         ))}
                                                     </Select>
+                                                    {formData.duration === -1 && (
+                                                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, ml: 1.75 }}>
+                                                            Time is not required for all-day meetings
+                                                        </Typography>
+                                                    )}
                                                 </FormControl>
                                             </Grid2>
                                         </Grid2>
@@ -1546,9 +1607,18 @@ export default function ZoomPage() {
                                             <Select
                                                 value={formData.duration}
                                                 label="Duration"
-                                                onChange={(e) =>
-                                                    setFormData({ ...formData, duration: Number(e.target.value) })
-                                                }
+                                                onChange={(e) => {
+                                                    const newDuration = Number(e.target.value);
+                                                    // Clear time when switching to all-day, or set default time when switching from all-day
+                                                    if (newDuration === -1) {
+                                                        setFormData({ ...formData, duration: newDuration, startTime: "" });
+                                                    } else if (formData.duration === -1 && !formData.startTime) {
+                                                        // If switching from all-day and no time is set, set a default time
+                                                        setFormData({ ...formData, duration: newDuration, startTime: "09:00" });
+                                                    } else {
+                                                        setFormData({ ...formData, duration: newDuration });
+                                                    }
+                                                }}
                                             >
                                                 <MenuItem value={15}>15 minutes</MenuItem>
                                                 <MenuItem value={30}>30 minutes</MenuItem>
@@ -1561,7 +1631,7 @@ export default function ZoomPage() {
                                                 <MenuItem value={-1}>All Day</MenuItem>
                                             </Select>
                                         </FormControl>
-                                        {formData.startDate && formData.startTime && (
+                                        {formData.startDate && (formData.duration === -1 || formData.startTime) && (
                                             <Paper
                                                 elevation={0}
                                                 sx={{
@@ -1571,13 +1641,15 @@ export default function ZoomPage() {
                                                 }}
                                             >
                                                 <Typography variant="body2" color="text.secondary" gutterBottom>
-                                                    Selected Time:
+                                                    {formData.duration === -1 ? "Selected Date:" : "Selected Time:"}
                                                 </Typography>
                                                 <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                                    {format(getCombinedDateTime()!, "EEEE, MMMM d, yyyy 'at' HH:mm")}
+                                                    {formData.duration === -1
+                                                        ? format(formData.startDate, "EEEE, MMMM d, yyyy")
+                                                        : format(getCombinedDateTime()!, "EEEE, MMMM d, yyyy 'at' HH:mm")}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                                    Duration: {formData.duration === -1 ? "All Day" : `${formData.duration} minutes`}
+                                                    Duration: {formData.duration === -1 ? "All Day (00:00 - 23:59)" : `${formData.duration} minutes`}
                                                 </Typography>
                                             </Paper>
                                         )}
@@ -1594,7 +1666,7 @@ export default function ZoomPage() {
                                 </StepLabel>
                                 <StepContent>
                                     <Box sx={{ pt: 2 }}>
-                                        {formData.startDate && formData.startTime.trim() ? (
+                                        {formData.startDate && (formData.duration === -1 || formData.startTime.trim()) ? (
                                             <>
                                                 {getAvailableAccounts().length > 0 ? (
                                                     <FormControl fullWidth>
@@ -1651,7 +1723,9 @@ export default function ZoomPage() {
                                             </>
                                         ) : (
                                             <Alert severity="info">
-                                                Please select a date and time first to see available accounts.
+                                                {formData.duration === -1
+                                                    ? "Please select a date first to see available accounts."
+                                                    : "Please select a date and time first to see available accounts."}
                                             </Alert>
                                         )}
                                     </Box>
@@ -1815,9 +1889,11 @@ export default function ZoomPage() {
                                             <Typography variant="body2" sx={{ fontWeight: 600 }}>
                                                 {formData.topic || "Untitled Meeting"}
                                             </Typography>
-                                            {formData.startDate && formData.startTime && (
+                                            {formData.startDate && (formData.duration === -1 || formData.startTime) && (
                                                 <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
-                                                    {format(getCombinedDateTime()!, "MMM d, yyyy 'at' HH:mm")} • {formData.duration === -1 ? "All Day" : `${formData.duration} min`}
+                                                    {formData.duration === -1
+                                                        ? format(formData.startDate, "MMM d, yyyy") + " • All Day (00:00 - 23:59)"
+                                                        : format(getCombinedDateTime()!, "MMM d, yyyy 'at' HH:mm") + ` • ${formData.duration} min`}
                                                 </Typography>
                                             )}
                                             {formData.accountId && (
@@ -1864,7 +1940,7 @@ export default function ZoomPage() {
                             onClick={handleNext}
                             endIcon={<ArrowForwardIcon />}
                             disabled={
-                                (activeStep === 0 && (!formData.startDate || !formData.startTime.trim())) ||
+                                (activeStep === 0 && (!formData.startDate || (formData.duration !== -1 && !formData.startTime.trim()))) ||
                                 (activeStep === 1 && !formData.accountId)
                             }
                         >
